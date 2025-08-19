@@ -132,20 +132,42 @@ const Controller = {
     View.renderWords(Model.words, Model.foundWords, Model.placedWords);
   },
   attachEvents() {
-    document.getElementById("board").addEventListener("click", (e) => {
+    const boardDiv = document.getElementById("board");
+    let isSelecting = false;
+    let lastCell = null;
+
+    boardDiv.addEventListener("mousedown", (e) => {
       if (!e.target.classList.contains("cell")) return;
+      isSelecting = true;
+      Model.selectedCells = [];
       const x = +e.target.dataset.x;
       const y = +e.target.dataset.y;
-      // Seleção contígua
-      if (Model.selectedCells.length === 0 || Controller.isContiguous(x, y)) {
-        if (!Model.selectedCells.some(([sx, sy]) => sx === x && sy === y)) {
-          Model.selectedCells.push([x, y]);
-        }
-      }
-      Controller.checkSelection();
+      Model.selectedCells.push([x, y]);
+      lastCell = [x, y];
       this.updateView();
     });
-    document.getElementById("board").addEventListener("contextmenu", (e) => {
+
+    boardDiv.addEventListener("mouseover", (e) => {
+      if (!isSelecting || !e.target.classList.contains("cell")) return;
+      const x = +e.target.dataset.x;
+      const y = +e.target.dataset.y;
+      if ((Model.selectedCells.length === 0 || Controller.isContiguous(x, y)) &&
+        !Model.selectedCells.some(([sx, sy]) => sx === x && sy === y)) {
+        Model.selectedCells.push([x, y]);
+        lastCell = [x, y];
+        this.updateView();
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (isSelecting) {
+        isSelecting = false;
+        Controller.checkSelection();
+        this.updateView();
+      }
+    });
+
+    boardDiv.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       Model.selectedCells = [];
       View.showMessage("");
