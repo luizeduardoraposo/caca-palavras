@@ -1,6 +1,6 @@
 // --- Model ---
 const Model = {
-  boardSize: 8,
+  boardSize: 4,
   words: [],
   board: [],
   placedWords: [],
@@ -80,7 +80,7 @@ const Model = {
 
 // --- View ---
 const View = {
-  renderBoard(board, selectedCells, highlights) {
+  renderBoard(board, selectedCells, highlights, flashCells = []) {
     const boardDiv = document.getElementById("board");
     boardDiv.innerHTML = "";
     for (let y = 0; y < board.length; y++) {
@@ -95,6 +95,9 @@ const View = {
         if (highlight) {
           cell.classList.add("highlight");
           cell.style.background = highlight.color;
+        }
+        if (flashCells.some(([fx, fy]) => fx === x && fy === y)) {
+          cell.classList.add("flash");
         }
         boardDiv.appendChild(cell);
       }
@@ -112,6 +115,16 @@ const View = {
       listDiv.appendChild(span);
     });
   },
+
+  renderScoreboard(foundWords) {
+    const foundList = document.getElementById("found-list");
+    foundList.innerHTML = "";
+    Array.from(foundWords).forEach(word => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      foundList.appendChild(li);
+    });
+  },
   showMessage(msg) {
     document.getElementById("message").textContent = msg;
   }
@@ -127,9 +140,10 @@ const Controller = {
     this.updateView();
     this.attachEvents();
   },
-  updateView() {
-    View.renderBoard(Model.board, Model.selectedCells, Model.placedWords.filter(w => Model.foundWords.has(w.word)));
+  updateView(flashCells = []) {
+    View.renderBoard(Model.board, Model.selectedCells, Model.placedWords.filter(w => Model.foundWords.has(w.word)), flashCells);
     View.renderWords(Model.words, Model.foundWords, Model.placedWords);
+    View.renderScoreboard(Model.foundWords);
   },
   attachEvents() {
     const boardDiv = document.getElementById("board");
@@ -187,10 +201,16 @@ const Controller = {
       if (Controller.pathsEqual(w.path, Model.selectedCells)) {
         Model.foundWords.add(w.word);
         View.showMessage(`Você encontrou: ${w.word}`);
-        Model.selectedCells = [];
-        if (Model.foundWords.size === Model.placedWords.length) {
-          View.showMessage("Parabéns! Todas as palavras foram encontradas!");
-        }
+        // Flash nas células da palavra
+        const flashCells = [...w.path];
+        this.updateView(flashCells);
+        setTimeout(() => {
+          Model.selectedCells = [];
+          this.updateView();
+          if (Model.foundWords.size === Model.placedWords.length) {
+            View.showMessage("Parabéns! Todas as palavras foram encontradas!");
+          }
+        }, 450);
         return;
       }
     }

@@ -1,65 +1,119 @@
+#scoreboard {
+  margin-left: 32px;
+  min-width: 120px;
+}
+
+#scoreboard h2 {
+  font-size: 1.2em;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+#found-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#found-list li {
+  background: #27ae60;
+  color: #fff;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: background 0.2s;
+}
+
+.cell.flash {
+  animation: flash 0.45s linear;
+}
+
+@keyframes flash {
+  0% {
+    background: #fff700;
+    color: #333;
+  }
+
+  60% {
+    background: #fff700;
+    color: #333;
+  }
+
+  100% {
+    background: #e74c3c;
+    color: #fff;
+  }
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  background: #fff;
   margin: 0;
   padding: 0;
 }
 
 #app {
-  max-width: 500px;
+  max-width: 300px;
   margin: 40px auto;
   background: #fff;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
 }
+
 
 #board {
   display: grid;
-  grid-template-columns: repeat(8, 40px);
-  grid-template-rows: repeat(8, 40px);
-  gap: 4px;
-  margin: 24px 0;
+  grid-template-columns: repeat(4, 120px);
+  grid-template-rows: repeat(4, 120px);
+  gap: 8px;
+  margin: 32px auto;
+  width: 500px;
 }
 
 .cell {
-  width: 40px;
-  height: 40px;
-  background: #e0e0e0;
+  width: 120px;
+  height: 120px;
+  background: #e74c3c;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2em;
+  font-size: 3em;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
-  border-radius: 4px;
   user-select: none;
-  transition: background 0.2s;
+  border: 2px solid #333;
+  box-sizing: border-box;
+  transition: background 0.2s, color 0.2s;
 }
 
 .cell.selected {
-  background: #b3d1ff;
+  background: #c0392b;
 }
 
 .cell.highlight {
-  color: #fff;
-  font-weight: bold;
+  background: #27ae60 !important;
+  color: #fff !important;
 }
 
 #words-list {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .word {
   display: inline-block;
-  margin: 0 8px 8px 0;
-  padding: 4px 10px;
-  border-radius: 4px;
+  margin: 0 6px 6px 0;
+  padding: 2px 8px;
+  border-radius: 3px;
   font-weight: bold;
   color: #fff;
+  font-size: 0.9em;
 }
 
 #message {
-  margin-top: 16px;
-  font-size: 1.1em;
+  margin-top: 12px;
+  font-size: 1em;
   color: #2e7d32;
 }
